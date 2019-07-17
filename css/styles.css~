@@ -1,0 +1,34 @@
+.days {
+    display: table-cell;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    margin: 30px;
+}
+
+.timeRow {
+    padding-right: 15px;
+}
+
+td {
+    padding-right: 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-cell {
+    text-align: center;
+}
+
+#done {
+    width: 100px;
+    height: 60px;
+    font-size: 1.3em;
+    margin-left: 30px;
+}
+
+body {
+    background-color: #B4EBFD;
+    
+}

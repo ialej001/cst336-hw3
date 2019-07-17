@@ -1,0 +1,84 @@
+
+
+$("#done").on("click", function () {
+    $("#day1").empty();
+    $("#day2").empty();
+    $("#day3").empty();
+    $("#day4").empty();
+    $("#day5").empty();
+    $("#day6").empty();
+    displayWeather($("#zipCode").val(), $('input[name="temp"]:checked').val());
+});
+
+function displayWeather(zipCode, units) {
+    var url = "https://api.openweathermap.org/data/2.5/forecast?zip=" + zipCode + "&appid=d083ed798bd8de915cf9cfd1724ea3b1&units=" + units;
+    var date = new Date();
+    var currentDate = date.toISOString().slice(0,10);
+    var displayDayCounter = 1;
+    var dayVariable = "#day1"
+    var tempUnit;
+    firstSubmit = true;
+    
+    if (units == 'imperial') {
+        tempUnit = 'F';
+    }
+    else {
+        tempUnit = 'C';
+    }
+    
+    $.ajax({
+          method: "GET",
+             url: url,
+        dataType: "json",
+            data: {},
+         success: function (result,status) {
+            var k = 0;
+            var compareDay;
+            var time;
+            var city = result.city.name;
+            var country = result.city.country;
+            
+            $("#cityInfo").remove();
+            $("#zip").append('<p id="cityInfo">The weather in ' + city + ', ' + country + ' is:</p>');
+            
+            $("#weatherArea").css("margin-bottom", "15px");
+            $("#weatherArea").prepend('<table>')
+            
+            $(".days").css("border-width", "2px");
+            $(".days").css("border-style", "solid");
+            $(".days").css("border-color", "black");            
+            
+            result.list.forEach(function (i) {
+                compareDay = i.dt_txt.slice(0, 10);
+                time = i.dt_txt.slice(11, 16);
+
+                if (k == 0) {
+                    $(dayVariable).append('<tr><td><strong>' + compareDay.slice(5,10) + '</strong></td></tr>');
+                    $(dayVariable).append('<tr><td class="table-cell">Time</td><td>Temperature</td><td>Condition</td></tr>');
+                }
+                else if (compareDay > currentDate) {
+                    displayDayCounter += 1;
+                    dayVariable = "#day" + displayDayCounter;
+                    $(dayVariable).append('<tr><td><strong>' + compareDay.slice(5,10) + '</strong></td></tr>');
+                    $(dayVariable).append('<tr><td class="table-cell">Time</td><td>Temperature</td><td>Condition</td></tr>');
+                    currentDate = compareDay;
+                }
+                else {
+                    $(dayVariable).append('<tr><td class="table-cell">' + time  + '</td><td class="table-cell">' 
+                                          + i.main.temp.toPrecision(2) + ' ' + tempUnit + '</td><td class="table-cell">' 
+                                          + i.weather[0].main + '</td></tr>');
+                    //$(dayVariable).append('<span class="timeRow">' + time + '</span>')
+                    //$(dayVariable).append('<span>' + i.main.temp.toPrecision(2) + ' ' + tempUnit + '</span><br>');
+                }
+                
+                k += 1;
+            });
+            
+            $("#weatherArea").append('</table>');
+        },
+        error: function (xhr, status, error) {
+            $("#zipError").html("Invalid zip code.");
+            $("#zipError").css("color", "red");
+        }
+    });
+}
